@@ -1,0 +1,37 @@
+<%- include('../header') %>
+
+<div style="display: flex; align-items: start; gap: 20px;">
+    <img src="/images/<%= profile.profileImage %>" alt="Profile Image" class="profile-img" style="width: 150px; height: 150px;">
+    <div>
+        <h1><%= profile.username %></h1>
+        <p>Member since: <%= profile.registrationDate.toDateString() %></p>
+        <p><strong>Bio:</strong> <%= profile.bio || 'No bio yet.' %></p>
+    </div>
+</div>
+
+<hr>
+
+<h3>Statistics</h3>
+<ul>
+    <li>Questions posted: <%= stats.questions %></li>
+    <li>Answers given: <%= stats.answers %></li>
+    <li>Accepted answers: <%= stats.accepted %></li>
+</ul>
+
+<% if (user && user.toString() === profile._id.toString()) { %>
+    <hr>
+    <h3>Edit Profile</h3>
+    <form action="/users/update" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="bio">Bio</label>
+            <textarea name="bio" id="bio"><%= profile.bio %></textarea>
+        </div>
+        <div class="form-group">
+            <label for="profileImage">Profile Image</label>
+            <input type="file" name="profileImage" id="profileImage">
+        </div>
+        <button type="submit">Update Profile</button>
+    </form>
+<% } %>
+
+<%- include('../footer') %>

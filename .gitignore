@@ -1,0 +1,7 @@
+node_modules/
+.env
+public/images/*
+!public/images/default-avatar.png
+!public/images/logo.gif
+!public/images/Helvetica.ttf
+!public/images/Helvetica-light.ttf

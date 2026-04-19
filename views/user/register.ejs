@@ -1,0 +1,27 @@
+<%- include('../header') %>
+
+<h1>Register</h1>
+
+<% if (error) { %>
+    <div style="background: #3264ff; color: #ebff00; padding: 15px; border-radius: 4px; margin-bottom: 20px; font-weight: bold; text-transform: uppercase; border: 2px solid #3264ff;">
+        <%= error %>
+    </div>
+<% } %>
+
+<form action="/users" method="post">
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" required>
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required>
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" required>
+    </div>
+    <button type="submit">Register</button>
+</form>
+
+<%- include('../footer') %>

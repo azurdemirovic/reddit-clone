@@ -1,0 +1,99 @@
+<%- include('../header') %>
+
+<div class="question-detail" style="display: flex; gap: 20px; align-items: start; margin-bottom: 40px;">
+    <a href="/users/<%= question.author._id %>">
+        <img src="/images/<%= question.author.profileImage %>" class="profile-img" style="width: 70px; height: 70px;">
+    </a>
+    <div style="flex: 1; min-width: 0;">
+        <h1 style="margin: 0 0 10px 0; font-size: 2.5em; line-height: 1.1;"><%= question.title %></h1>
+        <div class="meta" style="font-size: 0.9em; margin-bottom: 20px;">
+            <a href="/users/<%= question.author._id %>" style="text-decoration: none;">
+                <span style="color: #ebff00; background: #3264ff; padding: 2px 8px; border-radius: 3px; font-weight: bold; text-transform: uppercase;">
+                    <%= question.author.username %>
+                </span> 
+            </a>
+            • <%= timeAgo(question.createdAt) %> • <%= question.views %> views
+        </div>
+        <div style="font-size: 1.2em; white-space: pre-wrap; word-wrap: break-word; line-height: 1.6;"><%= question.description %></div>
+    </div>
+</div>
+
+<hr style="border-top: 4px solid #3264ff;">
+
+<h3 style="text-transform: uppercase; letter-spacing: 2px;">Discussion</h3>
+
+<div class="answers-section">
+    <% if (acceptedAnswer) { %>
+        <div class="accepted" style="display: flex; gap: 15px; align-items: start; border-left: 10px solid #3264ff;">
+            <a href="/users/<%= acceptedAnswer.author._id %>">
+                <img src="/images/<%= acceptedAnswer.author.profileImage %>" class="profile-img">
+            </a>
+            <div class="answer-content">
+                <div style="margin-bottom: 5px;">
+                    <a href="/users/<%= acceptedAnswer.author._id %>" style="text-decoration: none;">
+                        <span style="color: #ebff00; background: #3264ff; padding: 2px 6px; font-weight: bold; text-transform: uppercase; font-size: 0.85em;">
+                            <%= acceptedAnswer.author.username %>
+                        </span>
+                    </a>
+                    <span style="font-size: 0.8em; margin-left: 10px; font-weight: bold;">
+                        <%= timeAgo(acceptedAnswer.createdAt) %>
+                    </span>
+                    <span style="margin-left: 10px; background: #3264ff; color: #ebff00; padding: 2px 6px; font-size: 0.7em; font-weight: bold; border-radius: 10px;">SOLUTION</span>
+                </div>
+                <div class="answer-text" style="font-size: 1.1em; margin-top: 10px;"><%= acceptedAnswer.content %></div>
+            </div>
+        </div>
+    <% } %>
+
+    <% answers.forEach(function(answer) { %>
+        <div class="answer-card" style="border-bottom: 2px solid #3264ff; padding: 20px 0;">
+            <a href="/users/<%= answer.author._id %>">
+                <img src="/images/<%= answer.author.profileImage %>" class="profile-img" style="width: 45px; height: 45px;">
+            </a>
+            <div class="answer-content">
+                <div style="margin-bottom: 8px;">
+                    <a href="/users/<%= answer.author._id %>" style="text-decoration: none;">
+                        <span style="color: #ebff00; background: #3264ff; padding: 2px 6px; font-weight: bold; text-transform: uppercase; font-size: 0.85em;">
+                            <%= answer.author.username %>
+                        </span>
+                    </a>
+                    <span style="font-size: 0.8em; margin-left: 10px; font-weight: bold;">
+                        <%= timeAgo(answer.createdAt) %>
+                    </span>
+                </div>
+                <div class="answer-text" style="font-size: 1.05em;"><%= answer.content %></div>
+                
+                <div class="meta" style="margin-top: 10px;">
+                    <% if (user && user.toString() === question.author._id.toString() && !question.acceptedAnswer) { %>
+                        <form action="/questions/<%= question._id %>/accept/<%= answer._id %>" method="post" style="display: inline;">
+                            <button type="submit" style="padding: 4px 12px; font-size: 0.7em; text-transform: uppercase;">Mark as Solution</button>
+                        </form>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    <% }); %>
+
+    <% if (answers.length === 0 && !acceptedAnswer) { %>
+        <p style="font-style: italic; opacity: 0.7;">No one has scrambled a response yet.</p>
+    <% } %>
+</div>
+
+<% if (user) { %>
+    <div style="margin-top: 50px; background: #3264ff; padding: 25px; border-radius: 5px;">
+        <h4 style="color: #ebff00; margin-top: 0; text-transform: uppercase;">Scramble an Answer</h4>
+        <form action="/answers" method="post">
+            <input type="hidden" name="questionId" value="<%= question._id %>">
+            <div class="form-group">
+                <textarea name="content" rows="5" required style="border: none;"></textarea>
+            </div>
+            <button type="submit" style="width: 100%; font-size: 1.1em; border-color: #ebff00;">Post Response</button>
+        </form>
+    </div>
+<% } else { %>
+    <div style="margin-top: 40px; text-align: center; padding: 20px; border: 2px dashed #3264ff;">
+        <p><a href="/users/login" style="text-transform: uppercase; font-weight: bold;">Login</a> to join the conversation.</p>
+    </div>
+<% } %>
+
+<%- include('../footer') %>

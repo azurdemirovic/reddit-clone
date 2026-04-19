@@ -1,0 +1,31 @@
+<%- include('../header') %>
+
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>All Questions</h1>
+    <% if (user) { %>
+        <a href="/questions/new"><button>Ask Question</button></a>
+    <% } %>
+</div>
+
+<div class="questions-list">
+    <% if (questions.length === 0) { %>
+        <p>No questions yet.</p>
+    <% } %>
+    <% questions.forEach(function(question) { %>
+        <div class="question-item">
+            <div class="question-title">
+                <a href="/questions/<%= question._id %>"><%= question.title %></a>
+            </div>
+            <div class="meta">
+                Posted by <a href="/users/<%= question.author._id %>"><%= question.author.username %></a> 
+                on <%= question.createdAt.toDateString() %> | 
+                Views: <%= question.views %> |
+                <% if (question.acceptedAnswer) { %>
+                    <span style="color: #ebff00; background: #3264ff; padding: 2px 6px; font-weight: bold; border-radius: 3px; font-size: 0.8em; text-transform: uppercase;">RESOLVED</span>
+                <% } %>
+            </div>
+        </div>
+    <% }); %>
+</div>
+
+<%- include('../footer') %>
