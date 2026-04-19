@@ -18,10 +18,45 @@
             font-style: normal;
         }
 
-        body { font-family: 'HelveticaLight', Arial, sans-serif; margin: 0; padding: 0; background: #fff; color: #3264ff; }
+        @keyframes shrinkLogo {
+            0% { transform: scale(8); opacity: 1; }
+            80% { transform: scale(1); opacity: 1; visibility: visible; }
+            100% { transform: scale(0); opacity: 0; visibility: hidden; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes revealItem {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        #page-transition {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #ebff00;
+            display: none;
+            justify-content: center; align-items: center;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .playing-anim #page-transition {
+            display: flex;
+            animation: shrinkLogo 1.2s forwards ease-in-out;
+        }
+
+        .animate-rise { opacity: 1; }
+        .playing-anim .animate-rise { opacity: 0; animation: slideUp 0.8s ease-out 0.4s forwards; }
+        
+        .animate-reveal { opacity: 1; }
+        .playing-anim .animate-reveal { opacity: 0; animation: revealItem 0.5s ease-out forwards; }
+
+        body { font-family: 'HelveticaLight', Arial, sans-serif; margin: 0; padding: 0; background: #fff; color: #3264ff; overflow-x: hidden; }
         h1, h2, h3, h4, nav, button, .question-title { font-family: 'Helvetica', Arial, sans-serif; }
         
-        nav { background: #ebff00; color: #3264ff; padding: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #3264ff; }
+        nav { background: #ebff00; color: #3264ff; padding: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #3264ff; position: relative; z-index: 10; }
         nav a { color: #3264ff; text-decoration: none; margin: 0 10px; font-weight: bold; }
         nav a:hover { text-decoration: underline; }
         nav a:visited { color: #3264ff; }
@@ -29,7 +64,7 @@
         a { color: #3264ff; }
         a:visited { color: #3264ff; }
         
-        .container { max-width: 800px; margin: 20px auto; padding: 20px; background: #cdcdc3; border-radius: 5px; box-shadow: 0 0 15px rgba(0,0,0,0.1); border: 2px solid #3264ff; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; background: #cdcdc3; border-radius: 5px; box-shadow: 0 0 15px rgba(0,0,0,0.1); border: 2px solid #3264ff; position: relative; z-index: 5; }
         .answers-section { display: flex; flex-direction: column; gap: 20px; width: 100%; }
         .answer-card { display: flex; gap: 15px; padding: 15px; border-bottom: 1px solid #3264ff; width: 100%; box-sizing: border-box; }
         .answer-content { flex: 1; min-width: 0; }
@@ -54,7 +89,7 @@
             border-radius: 6px;
             padding: 10px;
             position: absolute;
-            z-index: 1;
+            z-index: 100;
             bottom: 125%;
             left: 50%;
             margin-left: -125px;
@@ -113,6 +148,25 @@
     </style>
 </head>
 <body>
+<script>
+    // Immediate animation check
+    (function() {
+        const path = window.location.pathname;
+        const referrer = document.referrer;
+        
+        const isPost = path.includes('/questions/') && path.split('/').pop().length >= 24;
+        const isHot = path.includes('/questions/hot');
+        const isAuth = path.includes('/users/login') || path.includes('/users/register');
+        const fromLogin = referrer.includes('/users/login');
+
+        if (isPost || isHot || isAuth || fromLogin) {
+            document.body.classList.add('playing-anim');
+        }
+    })();
+</script>
+<div id="page-transition">
+    <img src="/images/logo.gif" style="width: 100px;">
+</div>
 <nav>
     <div style="display: flex; align-items: center;">
         <a href="/" style="display: flex; align-items: center; text-decoration: none; color: #3264ff; gap: 10px;">

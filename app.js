@@ -27,7 +27,10 @@ var app = express();
 
 // Time ago helper globally available
 app.locals.timeAgo = function(date) {
-  const seconds = Math.floor((new Date() - date) / 1000);
+  const diff = new Date() - date;
+  if (diff < 5000) return "just now";
+  
+  const seconds = Math.floor(diff / 1000);
   let interval = Math.floor(seconds / 31536000);
   if (interval >= 1) return interval + "y ago";
   interval = Math.floor(seconds / 2592000);

@@ -1,11 +1,14 @@
 <%- include('../header') %>
 
-<div class="question-detail" style="display: flex; gap: 20px; align-items: start; margin-bottom: 40px;">
+<div class="question-detail animate-rise" style="display: flex; gap: 20px; align-items: start; margin-bottom: 40px;">
     <a href="/users/<%= question.author._id %>">
         <img src="/images/<%= question.author.profileImage %>" class="profile-img" style="width: 70px; height: 70px;">
     </a>
     <div style="flex: 1; min-width: 0;">
-        <h1 style="margin: 0 0 10px 0; font-size: 2.5em; line-height: 1.1;"><%= question.title %></h1>
+        <h1 id="typing-title" style="margin: 0 0 10px 0; font-size: 2.5em; line-height: 1.1; min-height: 1.1em;">
+            <%# The title will be populated by JS for the typing effect %>
+            <span id="title-source" style="display: none;"><%= question.title %></span>
+        </h1>
         <div class="meta" style="font-size: 0.9em; margin-bottom: 20px;">
             <a href="/users/<%= question.author._id %>" style="text-decoration: none;">
                 <span style="color: #ebff00; background: #3264ff; padding: 2px 8px; border-radius: 3px; font-weight: bold; text-transform: uppercase;">
@@ -24,7 +27,7 @@
 
 <div class="answers-section">
     <% if (acceptedAnswer) { %>
-        <div class="accepted" style="display: flex; gap: 15px; align-items: start; border-left: 10px solid #3264ff;">
+        <div class="accepted animate-reveal" style="display: flex; gap: 15px; align-items: start; border-left: 10px solid #3264ff;">
             <a href="/users/<%= acceptedAnswer.author._id %>">
                 <img src="/images/<%= acceptedAnswer.author.profileImage %>" class="profile-img">
             </a>
@@ -46,7 +49,7 @@
     <% } %>
 
     <% answers.forEach(function(answer) { %>
-        <div class="answer-card" style="border-bottom: 2px solid #3264ff; padding: 20px 0;">
+        <div class="answer-card animate-reveal" style="border-bottom: 2px solid #3264ff; padding: 20px 0;">
             <a href="/users/<%= answer.author._id %>">
                 <img src="/images/<%= answer.author.profileImage %>" class="profile-img" style="width: 45px; height: 45px;">
             </a>
@@ -78,6 +81,46 @@
         <p style="font-style: italic; opacity: 0.7;">No one has scrambled a response yet.</p>
     <% } %>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const isPlayingAnim = document.body.classList.contains('playing-anim');
+        const titleContainer = document.getElementById('typing-title');
+        const sourceText = document.getElementById('title-source').textContent;
+        
+        // Typing animation function
+        function typeWriter(text, i, fnCallback) {
+            if (i < text.length) {
+                titleContainer.innerHTML = text.substring(0, i+1) +'<span aria-hidden="true" style="border-right: .05em solid #3264ff; margin-left: 2px;"></span>';
+                setTimeout(function() {
+                    typeWriter(text, i + 1, fnCallback)
+                }, 30); // Speed of typing
+            } else if (typeof fnCallback == 'function') {
+                titleContainer.innerHTML = text; // Remove cursor
+                fnCallback();
+            }
+        }
+
+        // Delay typing until after logo shrink if playing anim
+        const startDelay = isPlayingAnim ? 1300 : 0;
+        
+        if (!isPlayingAnim) {
+            titleContainer.innerHTML = sourceText;
+        } else {
+            setTimeout(() => {
+                typeWriter(sourceText, 0);
+            }, startDelay);
+        }
+
+        // Staggered reveal for comments
+        if (isPlayingAnim) {
+            const items = document.querySelectorAll('.animate-reveal');
+            items.forEach((item, index) => {
+                item.style.animationDelay = `${1.2 + (index * 0.1)}s`;
+            });
+        }
+    });
+</script>
 
 <% if (user) { %>
     <div style="margin-top: 50px; background: #3264ff; padding: 25px; border-radius: 5px;">
