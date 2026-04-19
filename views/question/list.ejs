@@ -1,6 +1,6 @@
 <%- include('../header') %>
 
-<div style="display: flex; justify-content: space-between; align-items: center;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
     <h1>All Questions</h1>
     <% if (user) { %>
         <a href="/questions/new"><button>Ask Question</button></a>
@@ -16,13 +16,19 @@
             <div class="question-title">
                 <a href="/questions/<%= question._id %>"><%= question.title %></a>
             </div>
+            
             <div class="meta">
-                Posted by <a href="/users/<%= question.author._id %>"><%= question.author.username %></a> 
-                on <%= question.createdAt.toDateString() %> | 
-                Views: <%= question.views %> |
+                Posted by <a href="/users/<%= question.author._id %>" class="user-badge"><%= question.author.username %></a> 
+                • <%= timeAgo(question.createdAt) %> 
                 <% if (question.acceptedAnswer) { %>
-                    <span style="color: #ebff00; background: #3264ff; padding: 2px 6px; font-weight: bold; border-radius: 3px; font-size: 0.8em; text-transform: uppercase;">RESOLVED</span>
+                    <span style="color: #ebff00; background: #3264ff; padding: 2px 6px; font-weight: bold; border-radius: 3px; font-size: 0.8em; text-transform: uppercase; margin-left: 10px;">RESOLVED</span>
                 <% } %>
+            </div>
+            
+            <span class="views-bottom"><%= question.views %> VIEWS</span>
+            
+            <div class="tooltip-text">
+                <%= question.description.substring(0, 150) %><%= question.description.length > 150 ? '...' : '' %>
             </div>
         </div>
     <% }); %>

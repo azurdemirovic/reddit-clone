@@ -22,7 +22,18 @@ module.exports = {
                         error: err
                     });
                 }
-                return res.render('question/list', { questions: questions });
+                
+                // Get answer counts for each
+                var promises = questions.map(q => {
+                    return AnswerModel.countDocuments({ question: q._id }).then(count => {
+                        q.answerCount = count;
+                        return q;
+                    });
+                });
+
+                Promise.all(promises).then(results => {
+                    return res.render('question/list', { questions: results });
+                });
             });
     },
 

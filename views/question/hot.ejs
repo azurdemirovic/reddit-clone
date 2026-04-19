@@ -1,7 +1,7 @@
 <%- include('../header') %>
 
 <h1>Hot Questions</h1>
-<p>Questions ranked by recent activity (views and answers).</p>
+<p style="margin-bottom: 20px;">Questions ranked by recent activity (views and answers).</p>
 
 <div class="questions-list">
     <% if (questions.length === 0) { %>
@@ -12,10 +12,17 @@
             <div class="question-title">
                 <a href="/questions/<%= question._id %>"><%= question.title %></a>
             </div>
+            
             <div class="meta">
-                Posted by <a href="/users/<%= question.author._id %>"><%= question.author.username %></a> 
-                on <%= question.createdAt.toDateString() %> | 
-                <strong>Score: <%= question.hotness %></strong> (Views: <%= question.views %>, Answers: <%= question.answerCount %>)
+                Posted by <a href="/users/<%= question.author._id %>" class="user-badge"><%= question.author.username %></a> 
+                • <%= timeAgo(question.createdAt) %> 
+                • <%= question.answerCount %> ANSWERS
+            </div>
+            
+            <span class="views-bottom"><%= question.views %> VIEWS</span>
+            
+            <div class="tooltip-text">
+                <%= question.description.substring(0, 150) %><%= question.description.length > 150 ? '...' : '' %>
             </div>
         </div>
     <% }); %>
